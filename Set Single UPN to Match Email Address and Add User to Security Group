@@ -1,0 +1,28 @@
+#Author: Reggie Wilson
+#Last Modified: 7/8/24
+#
+#This script changes the user's UPN to match their email address they have on file in AD
+ 
+ cls
+
+
+#Prompt for username of employee who will have their UPN changed to match their email
+    $Username = Read-Host -Prompt "Enter Username for UPN Change"
+
+#Create variables for employee UPN and Email
+    $UPN = get-aduser $Username -Properties UserPrincipalName | Select -expand UserPrincipalName
+    $Email = get-aduser $Username -Properties EmailAddress | Select -expand EmailAddress
+
+#Set UPN to match Email Address
+    Set-ADUser $Username -UserPrincipalName $Email
+
+#Add User to 365 E3 License Security Group
+    Add-ADGroupMember -Identity "Security Group Name" -Members $Username
+
+#Print user info to console to verify UPN change.
+
+Get-ADUser $Username
+
+
+
+pause
